@@ -12,8 +12,10 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as AuthRouteImport } from './routes/auth'
+import { Route as AuthenticatedAccountRouteImport } from './routes/_authenticated/account'
 import { Route as AuthenticatedDocumentsRouteImport } from './routes/_authenticated/documents'
 import { Route as AuthenticatedSharedRouteImport } from './routes/_authenticated/shared'
+import { Route as AuthenticatedUploadsRouteImport } from './routes/_authenticated/uploads'
 import { Route as AuthenticatedDocumentsDocumentIdRouteImport } from './routes/_authenticated/documents.$documentId'
 
 const IndexRoute = IndexRouteImport.update({
@@ -30,6 +32,11 @@ const AuthRoute = AuthRouteImport.update({
   path: '/auth',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AuthenticatedAccountRoute = AuthenticatedAccountRouteImport.update({
+  id: '/account',
+  path: '/account',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
 const AuthenticatedDocumentsRoute = AuthenticatedDocumentsRouteImport.update({
   id: '/documents',
   path: '/documents',
@@ -38,6 +45,11 @@ const AuthenticatedDocumentsRoute = AuthenticatedDocumentsRouteImport.update({
 const AuthenticatedSharedRoute = AuthenticatedSharedRouteImport.update({
   id: '/shared',
   path: '/shared',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedUploadsRoute = AuthenticatedUploadsRouteImport.update({
+  id: '/uploads',
+  path: '/uploads',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
 const AuthenticatedDocumentsDocumentIdRoute =
@@ -50,15 +62,19 @@ const AuthenticatedDocumentsDocumentIdRoute =
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
+  '/account': typeof AuthenticatedAccountRoute
   '/documents': typeof AuthenticatedDocumentsRouteWithChildren
   '/shared': typeof AuthenticatedSharedRoute
+  '/uploads': typeof AuthenticatedUploadsRoute
   '/documents/$documentId': typeof AuthenticatedDocumentsDocumentIdRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
+  '/account': typeof AuthenticatedAccountRoute
   '/documents': typeof AuthenticatedDocumentsRouteWithChildren
   '/shared': typeof AuthenticatedSharedRoute
+  '/uploads': typeof AuthenticatedUploadsRoute
   '/documents/$documentId': typeof AuthenticatedDocumentsDocumentIdRoute
 }
 export interface FileRoutesById {
@@ -66,22 +82,40 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
   '/auth': typeof AuthRoute
+  '/_authenticated/account': typeof AuthenticatedAccountRoute
   '/_authenticated/documents': typeof AuthenticatedDocumentsRouteWithChildren
   '/_authenticated/shared': typeof AuthenticatedSharedRoute
+  '/_authenticated/uploads': typeof AuthenticatedUploadsRoute
   '/_authenticated/documents/$documentId': typeof AuthenticatedDocumentsDocumentIdRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/auth' | '/documents' | '/shared' | '/documents/$documentId'
+  fullPaths:
+    | '/'
+    | '/auth'
+    | '/account'
+    | '/documents'
+    | '/shared'
+    | '/uploads'
+    | '/documents/$documentId'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/auth' | '/documents' | '/shared' | '/documents/$documentId'
+  to:
+    | '/'
+    | '/auth'
+    | '/account'
+    | '/documents'
+    | '/shared'
+    | '/uploads'
+    | '/documents/$documentId'
   id:
     | '__root__'
     | '/'
     | '/_authenticated'
     | '/auth'
+    | '/_authenticated/account'
     | '/_authenticated/documents'
     | '/_authenticated/shared'
+    | '/_authenticated/uploads'
     | '/_authenticated/documents/$documentId'
   fileRoutesById: FileRoutesById
 }
@@ -114,6 +148,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/_authenticated/account': {
+      id: '/_authenticated/account'
+      path: '/account'
+      fullPath: '/account'
+      preLoaderRoute: typeof AuthenticatedAccountRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/documents': {
       id: '/_authenticated/documents'
       path: '/documents'
@@ -126,6 +167,13 @@ declare module '@tanstack/react-router' {
       path: '/shared'
       fullPath: '/shared'
       preLoaderRoute: typeof AuthenticatedSharedRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/uploads': {
+      id: '/_authenticated/uploads'
+      path: '/uploads'
+      fullPath: '/uploads'
+      preLoaderRoute: typeof AuthenticatedUploadsRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
     '/_authenticated/documents/$documentId': {
@@ -154,13 +202,17 @@ const AuthenticatedDocumentsRouteWithChildren =
   )
 
 interface AuthenticatedRouteRouteChildren {
+  AuthenticatedAccountRoute: typeof AuthenticatedAccountRoute
   AuthenticatedDocumentsRoute: typeof AuthenticatedDocumentsRouteWithChildren
   AuthenticatedSharedRoute: typeof AuthenticatedSharedRoute
+  AuthenticatedUploadsRoute: typeof AuthenticatedUploadsRoute
 }
 
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
+  AuthenticatedAccountRoute: AuthenticatedAccountRoute,
   AuthenticatedDocumentsRoute: AuthenticatedDocumentsRouteWithChildren,
   AuthenticatedSharedRoute: AuthenticatedSharedRoute,
+  AuthenticatedUploadsRoute: AuthenticatedUploadsRoute,
 }
 
 const AuthenticatedRouteRouteWithChildren =
