@@ -1,27 +1,75 @@
-# Collaborative Docs Studio
+# Ajaia Docs
 
-Create a new project with Supabase enabled.
+Ajaia Docs is a collaborative document workspace. Signed-in users create and edit rich-text documents, share them with other Ajaia Docs users, and manage uploaded files.
 
-@connector:github:"GitHub API" 
-for this project, create a repository like this on github (Nteinpraises/ajaia-collaborative-docs)
+> Note: Ajaia Docs does **not** support real-time simultaneous editing. Collaboration happens through document sharing.
 
-This project was built with [Lovable](https://lovable.dev).
+## Features
 
-## Build with Lovable
+- **Authentication** with Supabase Auth (sign up / sign in).
+- **Protected routes**: all app pages live under an authenticated layout (`src/routes/_authenticated`) that redirects signed-out visitors to `/auth`.
+- **Documents**: create, open, rename, edit, delete. Content autosaves shortly after you stop typing.
+- **Rich-text editing** with Tiptap (StarterKit).
+- **Sharing**: a document owner can share a document by entering another registered user's email address. Shared users get **view-only** access; only the owner can edit, rename, delete or share.
+- **Shared with me** page listing documents others have shared with you.
+- **File uploads** with Supabase Storage (`document-uploads` bucket): upload, list and delete your own files. Files are stored privately per user. Attaching uploaded files to documents is not implemented yet.
+- **Account** page for editing your profile.
+- **Responsive interface** for desktop and mobile.
+- **Row Level Security** on all tables and storage: users can only read their own documents or documents shared with them, and only access files in their own storage folder.
 
-Continue developing this project in the [Lovable editor](https://lovable.dev/projects/64524288-1ab4-403f-be72-1ab7d8ac5ab5).
+## Tech stack
 
-- **Ship faster**: describe what you want to build and Lovable handles the code.
-- **Stay in sync**: every change made in Lovable is committed straight to this repository.
-- **Full ownership**: this code is yours. Push to `main` on GitHub and your changes sync back into Lovable, ready for your next prompt.
+- React 19, TypeScript
+- TanStack Start / TanStack Router (file-based routing, server functions), TanStack Query
+- Vite
+- Tailwind CSS v4, shadcn/ui (Radix UI)
+- Tiptap rich-text editor
+- Supabase (PostgreSQL, Auth, Storage, RLS)
+- Zod for input validation
+- Vitest + Testing Library, ESLint, Prettier
 
-## Development
+## Project structure
 
-Prefer working locally? You need Node.js and npm — [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating).
-
-```sh
-git clone <this-repository-url>
-cd <repository-name>
-npm i
-npm run dev
 ```
+src/
+  components/            Shared UI (app shell, document list, shadcn/ui)
+  integrations/supabase/ Supabase clients, auth middleware, generated types
+  lib/                   Server functions (documents.functions.ts) and utilities
+  routes/
+    auth.tsx             Sign in / sign up
+    index.tsx            Landing page
+    _authenticated/      Protected pages: documents, document editor,
+                         shared, uploads, account
+  test/                  Vitest tests and setup
+supabase/
+  migrations/            Database schema, RLS policies, storage bucket
+```
+
+## Setup
+
+Requirements: [Bun](https://bun.sh) (or Node.js 20+ with npm) and a Supabase project.
+
+```bash
+git clone https://github.com/Nteinpraises/ajaia-collaborative-docs..git
+cd ajaia-collaborative-docs.
+bun install
+cp .env.example .env   # then fill in your Supabase values
+```
+
+Apply the SQL files in `supabase/migrations/` to your Supabase project (e.g. `supabase db push`).
+
+## Scripts
+
+```bash
+bun run dev      # start the development server
+bun run test     # run tests (Vitest)
+bun run lint     # run ESLint
+bun run build    # production build
+```
+
+## Security
+
+- `.env` is listed in `.gitignore` and must **never** be committed.
+- Only placeholder values belong in `.env.example`.
+- `SUPABASE_SERVICE_ROLE_KEY` is server-only: never expose it to the browser, never prefix it with `VITE_`, and never commit it.
+- If a key is ever committed by mistake, rotate it in the Supabase dashboard.

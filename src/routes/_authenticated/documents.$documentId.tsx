@@ -2,7 +2,12 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
 import { ArrowLeft, Check, Loader2, Share2 } from "lucide-react";
-import { getDocument, renameDocument, saveDocumentContent, shareDocument } from "@/lib/documents.functions";
+import {
+  getDocument,
+  renameDocument,
+  saveDocumentContent,
+  shareDocument,
+} from "@/lib/documents.functions";
 import { useEditor, EditorContent } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
 import { supabase } from "@/integrations/supabase/client";
@@ -53,7 +58,9 @@ function EditorPage() {
   }
 
   const [userId, setUserId] = useState<string | null>(null);
-  useEffect(() => { supabase.auth.getUser().then(({ data }) => setUserId(data.user?.id ?? null)); }, []);
+  useEffect(() => {
+    supabase.auth.getUser().then(({ data }) => setUserId(data.user?.id ?? null));
+  }, []);
   const isOwner = !!doc.data && userId === (doc.data as { owner_id: string }).owner_id;
   const timer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const editor = useEditor({
@@ -79,7 +86,9 @@ function EditorPage() {
     const c = (doc.data as { content: Record<string, unknown> }).content;
     if (c && (c as { type?: string }).type) editor.commands.setContent(c, { emitUpdate: false });
   }, [editor, doc.data]);
-  useEffect(() => { editor?.setEditable(isOwner); }, [editor, isOwner]);
+  useEffect(() => {
+    editor?.setEditable(isOwner);
+  }, [editor, isOwner]);
 
   async function handleShare() {
     const email = window.prompt("Share with (email of an Ajaia Docs user):");
@@ -170,16 +179,34 @@ function Toolbar({ editor }: { editor: ReturnType<typeof useEditor> }) {
   const btns: [string, () => void, boolean][] = [
     ["B", () => editor.chain().focus().toggleBold().run(), editor.isActive("bold")],
     ["I", () => editor.chain().focus().toggleItalic().run(), editor.isActive("italic")],
-    ["H1", () => editor.chain().focus().toggleHeading({ level: 1 }).run(), editor.isActive("heading", { level: 1 })],
-    ["H2", () => editor.chain().focus().toggleHeading({ level: 2 }).run(), editor.isActive("heading", { level: 2 })],
-    ["• List", () => editor.chain().focus().toggleBulletList().run(), editor.isActive("bulletList")],
-    ["1. List", () => editor.chain().focus().toggleOrderedList().run(), editor.isActive("orderedList")],
+    [
+      "H1",
+      () => editor.chain().focus().toggleHeading({ level: 1 }).run(),
+      editor.isActive("heading", { level: 1 }),
+    ],
+    [
+      "H2",
+      () => editor.chain().focus().toggleHeading({ level: 2 }).run(),
+      editor.isActive("heading", { level: 2 }),
+    ],
+    [
+      "• List",
+      () => editor.chain().focus().toggleBulletList().run(),
+      editor.isActive("bulletList"),
+    ],
+    [
+      "1. List",
+      () => editor.chain().focus().toggleOrderedList().run(),
+      editor.isActive("orderedList"),
+    ],
     ["Quote", () => editor.chain().focus().toggleBlockquote().run(), editor.isActive("blockquote")],
   ];
   return (
     <div className="flex flex-wrap gap-1 rounded-md border border-border bg-card p-1">
       {btns.map(([l, fn, on]) => (
-        <Button key={l} type="button" size="sm" variant={on ? "secondary" : "ghost"} onClick={fn}>{l}</Button>
+        <Button key={l} type="button" size="sm" variant={on ? "secondary" : "ghost"} onClick={fn}>
+          {l}
+        </Button>
       ))}
     </div>
   );

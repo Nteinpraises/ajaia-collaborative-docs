@@ -1,39 +1,40 @@
 import { QueryClient } from "@tanstack/react-query";
-import { createMemoryHistory, createRouter, RouterProvider } from "@tanstack/react-router";
-import { cleanup, render, waitFor } from "@testing-library/react";
-import { afterEach, describe, expect, it, vi } from "vitest";
+import { createMemoryHistory, createRouter } from "@tanstack/react-router";
+import { describe, expect, it } from "vitest";
 
 import { routeTree } from "@/routeTree.gen";
 
-function renderAt(path: string) {
-  const queryClient = new QueryClient();
-  const router = createRouter({
+function makeRouter() {
+  return createRouter({
     routeTree,
-    context: { queryClient },
-    history: createMemoryHistory({ initialEntries: [path] }),
+    context: { queryClient: new QueryClient() },
+    history: createMemoryHistory({ initialEntries: ["/"] }),
   });
-  return render(<RouterProvider router={router} />);
 }
 
-afterEach(() => {
-  cleanup();
-  vi.restoreAllMocks();
-});
+function routeIdsFor(path: string) {
+  return makeRouter()
+    .matchRoutes(path)
+    .map((m) => m.routeId);
+}
 
-// Assert only that the router mounts and paints, never page content:
-// routes are rewritten as the app is built and this must keep passing.
+// The root route renders a full <html> document shell that jsdom cannot mount
+// inside a test container, so these tests verify route matching directly.
 describe("App routing", () => {
-  it("renders the index route", async () => {
-    const { container } = renderAt("/");
-
-    await waitFor(() => expect(container.firstChild).not.toBeNull());
+  it("matches the public pages", () => {
+    expect(routeIdsFor("/")).toContain("/");
+    expect(routeIdsFor("/auth")).toContain("/auth");
   });
 
-  it("renders the not-found route", async () => {
-    vi.spyOn(console, "warn").mockImplementation(() => undefined);
+  it("places app pages behind the authenticated layout", () => {
+    for (const path of ["/documents", "/shared", "/uploads", "/account", "/documents/abc"]) {
+      expect(routeIdsFor(path)).toContain("/_authenticated");
+    }
+  });
 
-    const { container } = renderAt("/this-route-does-not-exist");
-
-    await waitFor(() => expect(container.firstChild).not.toBeNull());
+  it("does not match unknown paths to a page", () => {
+    const ids = routeIdsFor("/this-route-does-not-exist");
+    expect(ids).not.toContain("/");
+    expect(ids.some((id) => id.startsWith("/_authenticated/"))).toBe(false);
   });
 });

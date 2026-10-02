@@ -117,21 +117,35 @@ export const deleteDocument = createServerFn({ method: "POST" })
 
 export const saveDocumentContent = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
-  .inputValidator((d: unknown) => z.object({ id: z.string().uuid(), content: z.record(z.string(), z.any()) }).parse(d))
+  .inputValidator((d: unknown) =>
+    z.object({ id: z.string().uuid(), content: z.record(z.string(), z.any()) }).parse(d),
+  )
   .handler(async ({ data, context }) => {
-    const { error } = await context.supabase.from("documents").update({ content: data.content }).eq("id", data.id);
+    const { error } = await context.supabase
+      .from("documents")
+      .update({ content: data.content })
+      .eq("id", data.id);
     if (error) throw new Error(error.message);
     return { ok: true };
   });
 
 export const shareDocument = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
-  .inputValidator((d: unknown) => z.object({ id: z.string().uuid(), email: z.string().email() }).parse(d))
+  .inputValidator((d: unknown) =>
+    z.object({ id: z.string().uuid(), email: z.string().email() }).parse(d),
+  )
   .handler(async ({ data, context }) => {
-    const { data: profile } = await context.supabase.from("profiles").select("id").eq("email", data.email.toLowerCase()).maybeSingle();
+    const { data: profile } = await context.supabase
+      .from("profiles")
+      .select("id")
+      .eq("email", data.email.toLowerCase())
+      .maybeSingle();
     if (!profile) throw new Error("No Ajaia Docs user found with that email");
     if (profile.id === context.userId) throw new Error("You already own this document");
-    const { error } = await context.supabase.from("document_shares").insert({ document_id: data.id, shared_with: profile.id, role: "viewer" });
-    if (error) throw new Error(error.code === "23505" ? "Already shared with this user" : error.message);
+    const { error } = await context.supabase
+      .from("document_shares")
+      .insert({ document_id: data.id, shared_with: profile.id, role: "viewer" });
+    if (error)
+      throw new Error(error.code === "23505" ? "Already shared with this user" : error.message);
     return { ok: true };
   });

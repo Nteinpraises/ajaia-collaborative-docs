@@ -1,11 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { listSharedWithMe } from "@/lib/documents.functions";
-import {
-  DocumentListSkeleton,
-  EmptyState,
-  SharedDocumentList,
-} from "@/components/document-list";
+import { DocumentListSkeleton, EmptyState, SharedDocumentList } from "@/components/document-list";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 
 export const Route = createFileRoute("/_authenticated/shared")({

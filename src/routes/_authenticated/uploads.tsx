@@ -75,8 +75,7 @@ function UploadsPage() {
       <div>
         <h1 className="text-2xl font-semibold tracking-tight">Upload File</h1>
         <p className="mt-1 text-sm text-muted-foreground">
-          Import files into your workspace. Files are stored privately and only you can access
-          them.
+          Import files into your workspace. Files are stored privately and only you can access them.
         </p>
       </div>
 
@@ -90,11 +89,7 @@ function UploadsPage() {
         <p className="mt-1 text-sm text-muted-foreground">
           Imported files will be attachable to documents in a later phase.
         </p>
-        <Button
-          className="mt-5"
-          disabled={uploading}
-          onClick={() => fileInput.current?.click()}
-        >
+        <Button className="mt-5" disabled={uploading} onClick={() => fileInput.current?.click()}>
           {uploading ? (
             <>
               <Loader2 className="mr-2 h-4 w-4 animate-spin" /> Uploading…

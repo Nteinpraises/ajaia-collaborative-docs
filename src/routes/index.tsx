@@ -100,10 +100,7 @@ function LandingPage() {
 
         <section className="grid gap-4 pb-24 sm:grid-cols-2">
           {features.map(({ icon: Icon, title, description }) => (
-            <div
-              key={title}
-              className="rounded-lg border border-border bg-card p-6 text-left"
-            >
+            <div key={title} className="rounded-lg border border-border bg-card p-6 text-left">
               <div className="flex h-10 w-10 items-center justify-center rounded-md bg-muted">
                 <Icon className="h-5 w-5 text-foreground" />
               </div>

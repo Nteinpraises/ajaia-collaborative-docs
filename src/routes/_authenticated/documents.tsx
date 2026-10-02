@@ -43,9 +43,7 @@ function DocumentsPage() {
           <DocumentListSkeleton />
         ) : mine.isError ? (
           <Alert variant="destructive">
-            <AlertDescription>
-              Could not load your documents. {mine.error.message}
-            </AlertDescription>
+            <AlertDescription>Could not load your documents. {mine.error.message}</AlertDescription>
           </Alert>
         ) : mine.data.length === 0 ? (
           <EmptyState

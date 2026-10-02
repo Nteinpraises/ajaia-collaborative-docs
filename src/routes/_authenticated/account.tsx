@@ -72,7 +72,9 @@ function AccountPage() {
       <Card>
         <CardHeader>
           <CardTitle>Profile</CardTitle>
-          <CardDescription>This is how you appear to people you share documents with.</CardDescription>
+          <CardDescription>
+            This is how you appear to people you share documents with.
+          </CardDescription>
         </CardHeader>
         <CardContent>
           {profile.isPending ? (
@@ -82,7 +84,9 @@ function AccountPage() {
             </div>
           ) : profile.isError ? (
             <Alert variant="destructive">
-              <AlertDescription>Could not load your profile. {profile.error.message}</AlertDescription>
+              <AlertDescription>
+                Could not load your profile. {profile.error.message}
+              </AlertDescription>
             </Alert>
           ) : (
             <div className="space-y-4">
