@@ -2,7 +2,11 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
 import { ArrowLeft, Check, Loader2, Share2 } from "lucide-react";
-import { getDocument, renameDocument } from "@/lib/documents.functions";
+import { getDocument, renameDocument, saveDocumentContent, shareDocument } from "@/lib/documents.functions";
+import { useEditor, EditorContent } from "@tiptap/react";
+import StarterKit from "@tiptap/starter-kit";
+import { supabase } from "@/integrations/supabase/client";
+import { useRef } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -45,6 +49,46 @@ function EditorPage() {
     } catch (e) {
       setSaveState("saved");
       toast.error(e instanceof Error ? e.message : "Could not save title");
+    }
+  }
+
+  const [userId, setUserId] = useState<string | null>(null);
+  useEffect(() => { supabase.auth.getUser().then(({ data }) => setUserId(data.user?.id ?? null)); }, []);
+  const isOwner = !!doc.data && userId === (doc.data as { owner_id: string }).owner_id;
+  const timer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const editor = useEditor({
+    extensions: [StarterKit],
+    immediatelyRender: false,
+    editorProps: { attributes: { class: "prose-doc focus:outline-none min-h-80" } },
+    onUpdate: ({ editor }) => {
+      setSaveState("saving");
+      if (timer.current) clearTimeout(timer.current);
+      timer.current = setTimeout(async () => {
+        try {
+          await saveDocumentContent({ data: { id: documentId, content: editor.getJSON() } });
+          queryClient.invalidateQueries({ queryKey: ["documents"] });
+        } catch (e) {
+          toast.error(e instanceof Error ? e.message : "Could not save");
+        }
+        setSaveState("saved");
+      }, 800);
+    },
+  });
+  useEffect(() => {
+    if (!editor || !doc.data) return;
+    const c = (doc.data as { content: Record<string, unknown> }).content;
+    if (c && (c as { type?: string }).type) editor.commands.setContent(c, { emitUpdate: false });
+  }, [editor, doc.data]);
+  useEffect(() => { editor?.setEditable(isOwner); }, [editor, isOwner]);
+
+  async function handleShare() {
+    const email = window.prompt("Share with (email of an Ajaia Docs user):");
+    if (!email) return;
+    try {
+      await shareDocument({ data: { id: documentId, email: email.trim() } });
+      toast.success(`Shared with ${email}`);
+    } catch (e) {
+      toast.error(e instanceof Error ? e.message : "Could not share");
     }
   }
 
@@ -95,9 +139,11 @@ function EditorPage() {
               </>
             )}
           </span>
-          <Button variant="outline" size="sm" disabled title="Sharing arrives in a later phase">
-            <Share2 className="mr-2 h-4 w-4" /> Share
-          </Button>
+          {isOwner && (
+            <Button variant="outline" size="sm" onClick={handleShare}>
+              <Share2 className="mr-2 h-4 w-4" /> Share
+            </Button>
+          )}
         </div>
       </div>
 
@@ -110,13 +156,31 @@ function EditorPage() {
         aria-label="Document title"
       />
 
-      <div className="flex min-h-96 flex-col items-center justify-center rounded-lg border border-dashed border-border bg-card px-6 py-20 text-center">
-        <p className="text-sm font-medium text-foreground">The rich-text editor arrives next</p>
-        <p className="mt-1 max-w-sm text-sm text-muted-foreground">
-          This page is wired to your document in Supabase. The Tiptap editing surface will be
-          added in the next phase.
-        </p>
+      {!isOwner && <p className="text-xs text-muted-foreground">Shared with you — view only.</p>}
+      <Toolbar editor={editor} />
+      <div className="min-h-96 rounded-lg border border-border bg-card px-6 py-5">
+        <EditorContent editor={editor} />
       </div>
+    </div>
+  );
+}
+
+function Toolbar({ editor }: { editor: ReturnType<typeof useEditor> }) {
+  if (!editor || !editor.isEditable) return null;
+  const btns: [string, () => void, boolean][] = [
+    ["B", () => editor.chain().focus().toggleBold().run(), editor.isActive("bold")],
+    ["I", () => editor.chain().focus().toggleItalic().run(), editor.isActive("italic")],
+    ["H1", () => editor.chain().focus().toggleHeading({ level: 1 }).run(), editor.isActive("heading", { level: 1 })],
+    ["H2", () => editor.chain().focus().toggleHeading({ level: 2 }).run(), editor.isActive("heading", { level: 2 })],
+    ["• List", () => editor.chain().focus().toggleBulletList().run(), editor.isActive("bulletList")],
+    ["1. List", () => editor.chain().focus().toggleOrderedList().run(), editor.isActive("orderedList")],
+    ["Quote", () => editor.chain().focus().toggleBlockquote().run(), editor.isActive("blockquote")],
+  ];
+  return (
+    <div className="flex flex-wrap gap-1 rounded-md border border-border bg-card p-1">
+      {btns.map(([l, fn, on]) => (
+        <Button key={l} type="button" size="sm" variant={on ? "secondary" : "ghost"} onClick={fn}>{l}</Button>
+      ))}
     </div>
   );
 }
