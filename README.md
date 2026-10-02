@@ -45,31 +45,5 @@ supabase/
   migrations/            Database schema, RLS policies, storage bucket
 ```
 
-## Setup
 
-Requirements: [Bun](https://bun.sh) (or Node.js 20+ with npm) and a Supabase project.
 
-```bash
-git clone https://github.com/Nteinpraises/ajaia-collaborative-docs..git
-cd ajaia-collaborative-docs.
-bun install
-cp .env.example .env   # then fill in your Supabase values
-```
-
-Apply the SQL files in `supabase/migrations/` to your Supabase project (e.g. `supabase db push`).
-
-## Scripts
-
-```bash
-bun run dev      # start the development server
-bun run test     # run tests (Vitest)
-bun run lint     # run ESLint
-bun run build    # production build
-```
-
-## Security
-
-- `.env` is listed in `.gitignore` and must **never** be committed.
-- Only placeholder values belong in `.env.example`.
-- `SUPABASE_SERVICE_ROLE_KEY` is server-only: never expose it to the browser, never prefix it with `VITE_`, and never commit it.
-- If a key is ever committed by mistake, rotate it in the Supabase dashboard.
