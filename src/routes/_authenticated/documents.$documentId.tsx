@@ -166,7 +166,7 @@ function EditorPage() {
       />
 
       {!isOwner && <p className="text-xs text-muted-foreground">Shared with you — view only.</p>}
-      <Toolbar editor={editor} />
+      <Toolbar editor={editor!} />
       <div className="min-h-96 rounded-lg border border-border bg-card px-6 py-5">
         <EditorContent editor={editor} />
       </div>
