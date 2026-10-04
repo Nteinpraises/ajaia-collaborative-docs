@@ -105,6 +105,23 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      find_user_by_email: {
+        Args: { _email: string }
+        Returns: {
+          email: string
+          full_name: string
+          id: string
+        }[]
+      }
+      get_document_shares: {
+        Args: { _doc: string }
+        Returns: {
+          email: string
+          full_name: string
+          share_id: string
+          user_id: string
+        }[]
+      }
       is_document_shared_with: {
         Args: { _document_id: string; _user_id: string }
         Returns: boolean
