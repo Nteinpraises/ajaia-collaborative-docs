@@ -17,6 +17,7 @@ import { Input } from "@/components/ui/input";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { toast } from "sonner";
+import { SummaryPanel } from "@/components/summary-panel";
 
 export const Route = createFileRoute("/_authenticated/documents/$documentId")({
   head: () => ({
@@ -166,6 +167,18 @@ function EditorPage() {
       />
 
       {!isOwner && <p className="text-xs text-muted-foreground">Shared with you — view only.</p>}
+      {isOwner && editor && (
+        <SummaryPanel
+          documentId={documentId}
+          getText={() => editor.getText()}
+          onInsert={(t) =>
+            editor.chain().focus().insertContentAt(0, [
+              { type: "heading", attrs: { level: 2 }, content: [{ type: "text", text: "Summary" }] },
+              ...t.split(/\n+/).filter(Boolean).map((line) => ({ type: "paragraph", content: [{ type: "text", text: line }] })),
+            ]).run()
+          }
+        />
+      )}
       <Toolbar editor={editor!} />
       <div className="min-h-96 rounded-lg border border-border bg-card px-6 py-5">
         <EditorContent editor={editor} />
