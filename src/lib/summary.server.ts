@@ -2,7 +2,7 @@ import { createOpenAI } from "@ai-sdk/openai";
 import { streamText } from "ai";
 
 export async function summarizeText(text: string) {
-  const apiKey = process.env.LOVABLE_API_KEY;
+  const apiKey = process.env['LOVABLE_API_KEY'];
   if (!apiKey) throw new Error("AI is not configured (missing LOVABLE_API_KEY)");
   let runId: string | undefined;
   const provider = createOpenAI({
