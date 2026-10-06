@@ -15,6 +15,7 @@ export const Route = createFileRoute("/auth")({
       { title: "Sign in — Ajaia Docs" },
       { name: "description", content: "Sign in or create your Ajaia Docs account." },
       { property: "og:title", content: "Sign in — Ajaia Docs" },
+      { property: "og:description", content: "Sign in or create your Ajaia Docs account." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
     ],

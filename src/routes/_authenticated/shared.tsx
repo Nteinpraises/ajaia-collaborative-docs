@@ -9,6 +9,10 @@ export const Route = createFileRoute("/_authenticated/shared")({
     meta: [
       { title: "Shared With Me — Ajaia Docs" },
       { name: "description", content: "Documents your teammates have shared with you." },
+      { property: "og:title", content: "Shared With Me — Ajaia Docs" },
+      { property: "og:description", content: "Documents your teammates have shared with you." },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary" },
     ],
   }),
   component: SharedPage,
