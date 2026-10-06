@@ -24,6 +24,10 @@ export const Route = createFileRoute("/_authenticated/documents/$documentId")({
     meta: [
       { title: "Editor — Ajaia Docs" },
       { name: "description", content: "Edit your document in Ajaia Docs." },
+      { property: "og:title", content: "Editor — Ajaia Docs" },
+      { property: "og:description", content: "Edit documents and draft AI summaries in Ajaia Docs." },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary" },
     ],
   }),
   component: EditorPage,
@@ -169,6 +173,7 @@ function EditorPage() {
       {!isOwner && <p className="text-xs text-muted-foreground">Shared with you — view only.</p>}
       {isOwner && editor && (
         <SummaryPanel
+          key={documentId}
           documentId={documentId}
           getText={() => editor.getText()}
           onInsert={(t) =>
@@ -179,7 +184,7 @@ function EditorPage() {
           }
         />
       )}
-      <Toolbar editor={editor!} />
+      {editor && <Toolbar editor={editor} />}
       <div className="min-h-96 rounded-lg border border-border bg-card px-6 py-5">
         <EditorContent editor={editor} />
       </div>

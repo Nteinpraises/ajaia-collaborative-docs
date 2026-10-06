@@ -16,6 +16,10 @@ export const Route = createFileRoute("/_authenticated/account")({
     meta: [
       { title: "Account — Ajaia Docs" },
       { name: "description", content: "Manage your Ajaia Docs account." },
+      { property: "og:title", content: "Account — Ajaia Docs" },
+      { property: "og:description", content: "Manage your Ajaia Docs account." },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary" },
     ],
   }),
   component: AccountPage,

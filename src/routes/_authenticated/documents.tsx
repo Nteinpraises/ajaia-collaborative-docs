@@ -14,6 +14,10 @@ export const Route = createFileRoute("/_authenticated/documents")({
     meta: [
       { title: "Documents — Ajaia Docs" },
       { name: "description", content: "Your documents and documents shared with you." },
+      { property: "og:title", content: "Documents — Ajaia Docs" },
+      { property: "og:description", content: "Your documents and documents shared with you." },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary" },
     ],
   }),
   component: DocumentsPage,

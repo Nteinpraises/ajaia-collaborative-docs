@@ -8,3 +8,5 @@
 > Commits you push to the connected branch sync back to Lovable and show up in
 > the editor, so keep the branch in a working state.
 <!-- LOVABLE:END -->
+
+- Keep summary drafts in a document-keyed, collapsible SummaryPanel with independent editing state; only explicit insertion modifies document content.

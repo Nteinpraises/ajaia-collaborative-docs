@@ -13,6 +13,10 @@ export const Route = createFileRoute("/_authenticated/uploads")({
     meta: [
       { title: "Upload File — Ajaia Docs" },
       { name: "description", content: "Import files into your Ajaia Docs workspace." },
+      { property: "og:title", content: "Upload File — Ajaia Docs" },
+      { property: "og:description", content: "Import files into your Ajaia Docs workspace." },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary" },
     ],
   }),
   component: UploadsPage,
