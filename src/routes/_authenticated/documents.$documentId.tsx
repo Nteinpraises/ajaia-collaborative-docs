@@ -184,7 +184,7 @@ function EditorPage() {
           }
         />
       )}
-      <Toolbar editor={editor} />
+      {editor && <Toolbar editor={editor} />}
       <div className="min-h-96 rounded-lg border border-border bg-card px-6 py-5">
         <EditorContent editor={editor} />
       </div>
