@@ -32,6 +32,3 @@ dist-ssr
 *.sw?
 
 # Environment files (never commit real credentials)
-.env
-.env.*
-!.env.example
