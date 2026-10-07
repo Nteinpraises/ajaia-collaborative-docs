@@ -31,19 +31,19 @@ export function CommentThread({ documentId, userId }: { documentId: string; user
     if (!text || !userId) return;
     setBusy(true);
     const { data: u } = await supabase.auth.getUser();
-    const name = (u.user?.user_metadata?.full_name as string) || u.user?.email || "";
+    const name = (u.user?.user_metadata?.["full_name"] as string) || u.user?.email || "";
     const { error } = await (supabase as any)
       .from("document_comments")
       .insert({ document_id: documentId, author_id: userId, author_name: name, body: text.slice(0, 2000) });
     setBusy(false);
-    if (error) return toast.error(error.message);
+    if (error) { toast.error(error.message); return; }
     setBody("");
     qc.invalidateQueries({ queryKey: key });
   }
 
   async function remove(id: string) {
     const { error } = await (supabase as any).from("document_comments").delete().eq("id", id);
-    if (error) return toast.error(error.message);
+    if (error) { toast.error(error.message); return; }
     qc.invalidateQueries({ queryKey: key });
   }
 
