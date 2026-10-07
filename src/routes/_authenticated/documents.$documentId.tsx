@@ -18,6 +18,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { toast } from "sonner";
 import { SummaryPanel } from "@/components/summary-panel";
+import { CommentThread } from "@/components/comment-thread";
 
 export const Route = createFileRoute("/_authenticated/documents/$documentId")({
   head: () => ({
@@ -188,6 +189,7 @@ function EditorPage() {
       <div className="min-h-96 rounded-lg border border-border bg-card px-6 py-5">
         <EditorContent editor={editor} />
       </div>
+      <CommentThread documentId={documentId} userId={userId} />
     </div>
   );
 }
